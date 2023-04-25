@@ -5,29 +5,32 @@ print('AppEngine Version: ' .. Engine.getVersion())
 local DELAY = 1500 -- ms between visualization steps for demonstration purpose
 
 -- Creating viewer
-local viewer = View.create("viewer2D1")
+local viewer = View.create()
 
 -- Setting up graphical overlay attributes
 local shapeDeco = View.ShapeDecoration.create()
-shapeDeco:setLineColor(0, 255, 0)
-shapeDeco:setLineWidth(5)
-local textDeco = View.TextDecoration.create()
-textDeco:setColor(0, 255, 0)
-textDeco:setSize(40)
-textDeco:setPosition(30, 30)
+shapeDeco:setLineColor(0, 255, 0):setLineWidth(5)
+local textDeco = View.TextDecoration.create():setColor(0, 255, 0)
+textDeco:setSize(40):setPosition(30, 30)
 
 --End of Global Scope-----------------------------------------------------------
 
 --Start of Function and Event Scope---------------------------------------------
 
+---@param image Image
+---@param sleepTime int
+---@param text string
 local function presentImage(image, sleepTime, text)
-  local imageID = viewer:addImage(image)
-  viewer:addText(text, textDeco, nil, imageID)
+  viewer:addImage(image)
+  viewer:addText(text, textDeco)
   viewer:present()
   Script.sleep(sleepTime)
   viewer:clear()
 end
 
+---@param circles Shape[]
+---@param houghAcc Image
+---@return Shape
 local function getBestHoughCircle(circles, houghAcc)
   local bestCircles = {}
   local currentHighestPixVal = 0
@@ -50,6 +53,7 @@ local function getBestHoughCircle(circles, houghAcc)
   return bestCircles[1]
 end
 
+---@param img Image
 local function houghTransform(img)
   local radius = 54
   local w, h = img:getSize()
@@ -71,9 +75,9 @@ local function houghTransform(img)
   local bestCircle = getBestHoughCircle(circles, houghAcc)
 
   -- present results
-  local imageID = viewer:addImage(img)
-  viewer:addShape(bestCircle, shapeDeco, nil, imageID)
-  viewer:addText('Found Circle', textDeco, nil, imageID)
+  viewer:addImage(img)
+  viewer:addShape(bestCircle, shapeDeco)
+  viewer:addText('Found Circle', textDeco)
   viewer:present()
   Script.sleep(DELAY)
   viewer:clear()
